@@ -4,9 +4,9 @@ title: "[FEATURE REQUEST]: "
 labels: ["Feature Request"]
 body:
   - type: textarea
-  id: feature
-  attributes:
-    label: The Feature you want to suggest
-    description: This is where you type which feature you want!
-  validations:
-    required: true
+    id: feature-main
+    attributes:
+      label: Type everything you want about the feature here!
+      placeholder: Feature Text Here
+    validations:
+      required: true
