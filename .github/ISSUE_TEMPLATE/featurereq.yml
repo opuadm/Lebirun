@@ -1,3 +1,12 @@
 name: Feature Request
 description: Request a feature
 title: "[FEATURE REQUEST]: "
+labels: ["Feature Request"]
+body:
+  - type: textarea
+  id: feature
+  attributes:
+    label: The Feature you want to suggest
+    description: This is where you type which feature you want!
+  validations:
+    required: true
