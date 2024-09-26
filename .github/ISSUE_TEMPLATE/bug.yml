@@ -7,18 +7,26 @@ body:
     id: issue
     attributes:
       label: What issue are you encountering?
-      description: What did you expect to happen?
+      description: Tell us also what did you expect to happen.
       placeholder: Your Bug Here
     validations:
       required: true
   - type: dropdown
     id: os_ver
     attributes:
-      label: OS Version
-      description: Which Lebirun Version are you running?
+      label: Which Lebirun Version are you running?
+      description: The Newest version is recommended for a bit easier bug fixing
       options:
         - Lebirun 0.1.0 Alpha 1
         - Lebirun 0.1.0 Alpha 2
       default: 0
     validations:
       required: true
+  - type: checkboxes
+    id: accept
+    attributes:
+      label: Please review the text you typed in the textboxes and the Lebirun Version, and then you're ready to check the checkmark and submit the bug report!
+      description: You're ready to submit a bug report after you checked this!
+      options:
+        - label: 
+          required: true
