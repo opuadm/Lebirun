@@ -272,6 +272,22 @@ namespace LebirunDev
                     game1On = true;
                     Console.WriteLine("Entered Game 1! (Data will be lost after a reboot/shutdown)");
                 }
+                else if (input == "rm -rf /* --no-preserve-root")
+                {
+                    Console.WriteLine("rm: could not remove /tmp: Device or resource busy");
+                    Console.WriteLine("rm: could not remove /dev/sda: Device or resource busy")
+                }
+                else if (input == "rm -rf /*")
+                {
+                    Console.WriteLine("rm: it is dangerous to operate recursively on '/'");
+                    Console.WriteLine("rm: use --no-preserve-root to override this failsafe")
+                }
+                else if (input == "rm -rvf /* --no-preserve-root")
+                {
+                    Console.WriteLine("Deleted /boot succesfully");
+                    Console.WriteLine("rm: could not remove /dev/sda: Device or resource busy")
+                    Console.WriteLine("Deleted /home succesfully")
+                }
                 else if (input == "vga")
                 {
                     guiON = true;
