@@ -11,3 +11,14 @@ body:
       placeholder: Your Bug Here
     validations:
       required: true
+  - type: dropdown
+    id: os_ver
+    attributes:
+      label: OS Version
+      description: Which Lebirun Version are you running?
+      options:
+        - Lebirun 0.1.0 Alpha 1
+        - Lebirun 0.1.0 Alpha 2
+      default: 0
+    validations:
+      required: true
