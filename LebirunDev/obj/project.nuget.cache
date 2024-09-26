@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "dgSpecHash": "p2sX0rEbaYQ=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\OpuaY\\source\\repos\\LebirunDev\\LebirunDev\\LebirunDev.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\OpuaY\\.nuget\\packages\\cosmos.build\\0.1.0-localbuild20240919045338\\cosmos.build.0.1.0-localbuild20240919045338.nupkg.sha512",
+    "C:\\Users\\OpuaY\\.nuget\\packages\\cosmos.common\\0.1.0-localbuild20240919045346\\cosmos.common.0.1.0-localbuild20240919045346.nupkg.sha512",
+    "C:\\Users\\OpuaY\\.nuget\\packages\\cosmos.core\\0.1.0-localbuild20240919045346\\cosmos.core.0.1.0-localbuild20240919045346.nupkg.sha512",
+    "C:\\Users\\OpuaY\\.nuget\\packages\\cosmos.debug.kernel\\0.1.0-localbuild20240919045346\\cosmos.debug.kernel.0.1.0-localbuild20240919045346.nupkg.sha512",
+    "C:\\Users\\OpuaY\\.nuget\\packages\\cosmos.hal2\\0.1.0-localbuild20240919045346\\cosmos.hal2.0.1.0-localbuild20240919045346.nupkg.sha512",
+    "C:\\Users\\OpuaY\\.nuget\\packages\\cosmos.plugs\\0.1.0-localbuild20240919045346\\cosmos.plugs.0.1.0-localbuild20240919045346.nupkg.sha512",
+    "C:\\Users\\OpuaY\\.nuget\\packages\\cosmos.system2\\0.1.0-localbuild20240919045346\\cosmos.system2.0.1.0-localbuild20240919045346.nupkg.sha512",
+    "C:\\Users\\OpuaY\\.nuget\\packages\\il2cpu.api\\0.1.0-localbuild20240919045346\\il2cpu.api.0.1.0-localbuild20240919045346.nupkg.sha512"
+  ],
+  "logs": []
+}
