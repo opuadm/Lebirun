@@ -9,6 +9,5 @@ body:
       label: What issue are you encountering?
       description: What did you expect to happen?
       placeholder: Your Bug Here
-      value: ""
     validations:
       required: true
