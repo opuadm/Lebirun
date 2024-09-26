@@ -1,7 +1,7 @@
 name: Bug Report
 description: This is the form if you encounter bugs somewhere in Lebirun. (Some Bugs may be features OR its not a problem in code)
 title: "[BUG]: "
-labels: ["Bug"]
+label: ["Bug"]
 body:
   - type: textarea
     id: issue
