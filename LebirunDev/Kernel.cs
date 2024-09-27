@@ -9,6 +9,7 @@ using System.Threading;
 using Sys = Cosmos.System;
 using FileSystem = Cosmos.System.FileSystem;
 using System.IO;
+using Cosmos.Core_Plugs.System;
 
 namespace LebirunDev
 {
@@ -25,7 +26,7 @@ namespace LebirunDev
         string currentLoggedInUser = "none";
         string currentSelectUserLogin = "none";
         string previousLoggedInUser = "none";
-        string CurrentVersion = "0.1.0 Alpha 2";
+        string CurrentVersion = "0.1.0 Alpha 3";
         Canvas canvas;
 
         protected override void BeforeRun()
@@ -90,6 +91,8 @@ namespace LebirunDev
 
         protected override void Run()
         {
+            ProductMan productMan = new ProductMan();
+
             if (grubRescueOn)
             {
                 grubRescueFake1();
@@ -178,6 +181,10 @@ namespace LebirunDev
                         Console.WriteLine("website = Outputs the lebirun website link");
                         Console.WriteLine("infofetch = Outputs some of the OS Info");
                     }
+                    else if (input == "help 2" || input == "cmds 2")
+                    {
+                        Console.WriteLine("productman = A wizard for activating your current Lebirun Session");
+                    }
                     else if (input == "help grub" || input == "cmds grub")
                     {
                         Console.WriteLine("Current GRUB Arguments:");
@@ -186,7 +193,7 @@ namespace LebirunDev
                     else
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Invalid Help/Cmds Page. The Current Pages in Help/Cmds are: 1. You can also type help <command> but its only for some commands.");
+                        Console.WriteLine("Invalid Help/Cmds Page. The Current Pages in Help/Cmds are: 2. You can also type help <command> but its only for some commands.");
                         Console.ForegroundColor = ConsoleColor.White;
                     }
                 }
@@ -345,6 +352,41 @@ namespace LebirunDev
                 {
                     Console.WriteLine("Version: Lebirun " + CurrentVersion);
                     Console.WriteLine("Game 1 Coins: " + game1Coins);
+                    if (LebirunDev.ProductMan.ProductKeyNumber == 1)
+                    {
+                        Console.WriteLine("Product Key: " + productMan.productKeys[0]);
+                    }
+                    else if (LebirunDev.ProductMan.ProductKeyNumber == 2)
+                    {
+                        Console.WriteLine("Product Key: " + productMan.productKeys[1]);
+                    }
+                    else if (LebirunDev.ProductMan.ProductKeyNumber == 3)
+                    {
+                        Console.WriteLine("Product Key: " + productMan.productKeys[2]);
+                    }
+                    else if (LebirunDev.ProductMan.ProductKeyNumber == 4)
+                    {
+                        Console.WriteLine("Product Key: " + productMan.productKeys[3]);
+                    }
+                    else if (LebirunDev.ProductMan.ProductKeyNumber == 5)
+                    {
+                        Console.WriteLine("Product Key: " + productMan.productKeys[4]);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Product Key: None");
+                    }
+                }
+                else if (input == "productman")
+                {
+                    if (productMan.isActivated == false)
+                    {
+                        productMan.ProductManWizard();
+                    }
+                    else
+                    {
+                        Console.WriteLine("You already have a product key!");
+                    }
                 }
                 else
                 {
