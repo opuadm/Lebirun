@@ -29,6 +29,8 @@ namespace LebirunDev
         string CurrentVersion = "0.1.0 Alpha 3";
         Canvas canvas;
 
+        // test
+
         protected override void BeforeRun()
         {
             Console.Clear();
