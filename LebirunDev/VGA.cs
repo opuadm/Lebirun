@@ -19,22 +19,18 @@ namespace LebirunDev
             canvas = FullScreenCanvas.GetFullScreenCanvas(new Mode(640, 480, ColorDepth.ColorDepth32));
             canvas.Clear();
 
-            canvas.DrawFilledRectangle(Color.White, 0, 460, 640, 20);
+            canvas.DrawFilledRectangle(Color.MediumPurple, 0, 0, 640, 480);
 
-            Sys.MouseManager.ScreenWidth = (uint)632;
+            canvas.DrawFilledRectangle(Color.GhostWhite, 0, 465, 640, 15);
+
+            Sys.MouseManager.ScreenWidth = (uint)635;
             Sys.MouseManager.ScreenHeight = (uint)480;
             int X = (int)Sys.MouseManager.X;
             int Y = (int)Sys.MouseManager.Y;
-            canvas.DrawString("Reboot", PCScreenFont.Default, Color.Orange, 18, 460);
 
-            canvas.DrawFilledRectangle(Color.FromArgb(125, 0, 25, 255), (int)Sys.MouseManager.X, (int)Sys.MouseManager.Y, 5, 12);
+            canvas.DrawFilledRectangle(Color.Brown, (int)Sys.MouseManager.X, (int)Sys.MouseManager.Y, 5, 8);
 
             canvas.Display();
-
-            if (Sys.MouseManager.MouseState == Sys.MouseState.Left && Sys.MouseManager.Y >= 441 && Sys.MouseManager.Y <= 477 && Sys.MouseManager.X >= 10 && Sys.MouseManager.X <= 100)
-            {
-                Sys.Power.Reboot();
-            }
 
             canvas.Clear();
         }

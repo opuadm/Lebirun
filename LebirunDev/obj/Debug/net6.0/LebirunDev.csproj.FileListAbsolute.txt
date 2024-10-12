@@ -22,3 +22,4 @@ D:\VS2022-Projects\LebirunDev\LebirunDev\bin\Debug\net6.0\LebirunDev.deps.json
 D:\VS2022-Projects\LebirunDev\LebirunDev\bin\Debug\net6.0\LebirunDev.dll
 D:\VS2022-Projects\LebirunDev\LebirunDev\bin\Debug\net6.0\LebirunDev.pdb
 D:\VS2022-Projects\LebirunDev\LebirunDev\obj\Debug\net6.0\ref\LebirunDev.dll
+C:\Users\OpuaY\source\repos\LebirunDev\LebirunDev\obj\Debug\net6.0\LebirunDev.sourcelink.json

@@ -73,6 +73,22 @@
               "noWarn": [
                 "NU1604"
               ]
+            },
+            "CosmosFtpServer": {
+              "target": "Package",
+              "version": "[1.0.9, )"
+            },
+            "CosmosHttp": {
+              "target": "Package",
+              "version": "[1.0.4, )"
+            },
+            "System.Drawing.Common": {
+              "target": "Package",
+              "version": "[8.0.10, )"
+            },
+            "System.Drawing.Primitives": {
+              "target": "Package",
+              "version": "[4.3.0, )"
             }
           },
           "imports": [

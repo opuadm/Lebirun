@@ -11,7 +11,11 @@
           "Cosmos.Build": "0.1.0-localbuild20240919045338",
           "Cosmos.Debug.Kernel": "0.1.0-localbuild20240919045346",
           "Cosmos.Plugs": "0.1.0-localbuild20240919045346",
-          "Cosmos.System2": "0.1.0-localbuild20240919045346"
+          "Cosmos.System2": "0.1.0-localbuild20240919045346",
+          "CosmosFtpServer": "1.0.9",
+          "CosmosHttp": "1.0.4",
+          "System.Drawing.Common": "8.0.10",
+          "System.Drawing.Primitives": "4.3.0"
         },
         "runtime": {
           "LebirunDev.dll": {}
@@ -101,11 +105,90 @@
           }
         }
       },
+      "CosmosFtpServer/1.0.9": {
+        "dependencies": {
+          "Cosmos.System2": "0.1.0-localbuild20240919045346"
+        },
+        "runtime": {
+          "lib/net6.0/CosmosFtpServer.dll": {
+            "assemblyVersion": "1.0.9.0",
+            "fileVersion": "1.0.9.0"
+          }
+        }
+      },
+      "CosmosHttp/1.0.4": {
+        "dependencies": {
+          "Cosmos.System2": "0.1.0-localbuild20240919045346",
+          "Zlib.Portable": "1.11.0"
+        },
+        "runtime": {
+          "lib/net6.0/CosmosHttp.dll": {
+            "assemblyVersion": "1.0.4.0",
+            "fileVersion": "1.0.4.0"
+          }
+        }
+      },
       "IL2CPU.API/0.1.0-localbuild20240919045346": {
         "runtime": {
           "lib/netstandard2.0/IL2CPU.API.dll": {
             "assemblyVersion": "10.0.0.0",
             "fileVersion": "10.0.0.0"
+          }
+        }
+      },
+      "Microsoft.NETCore.Platforms/1.1.0": {},
+      "Microsoft.NETCore.Targets/1.1.0": {},
+      "Microsoft.Win32.SystemEvents/8.0.0": {
+        "runtime": {
+          "lib/net6.0/Microsoft.Win32.SystemEvents.dll": {
+            "assemblyVersion": "8.0.0.0",
+            "fileVersion": "8.0.23.53103"
+          }
+        },
+        "runtimeTargets": {
+          "runtimes/win/lib/net6.0/Microsoft.Win32.SystemEvents.dll": {
+            "rid": "win",
+            "assetType": "runtime",
+            "assemblyVersion": "8.0.0.0",
+            "fileVersion": "8.0.23.53103"
+          }
+        }
+      },
+      "System.Drawing.Common/8.0.10": {
+        "dependencies": {
+          "Microsoft.Win32.SystemEvents": "8.0.0"
+        },
+        "runtime": {
+          "lib/net6.0/System.Drawing.Common.dll": {
+            "assemblyVersion": "8.0.0.0",
+            "fileVersion": "8.0.1024.46803"
+          }
+        }
+      },
+      "System.Drawing.Primitives/4.3.0": {
+        "dependencies": {
+          "System.Runtime": "4.3.0",
+          "System.Runtime.Extensions": "4.3.0"
+        }
+      },
+      "System.Runtime/4.3.0": {
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.1.0",
+          "Microsoft.NETCore.Targets": "1.1.0"
+        }
+      },
+      "System.Runtime.Extensions/4.3.0": {
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.1.0",
+          "Microsoft.NETCore.Targets": "1.1.0",
+          "System.Runtime": "4.3.0"
+        }
+      },
+      "Zlib.Portable/1.11.0": {
+        "runtime": {
+          "lib/portable-net4+sl5+wp8+win8+wpa81+MonoTouch+MonoAndroid/Zlib.Portable.dll": {
+            "assemblyVersion": "1.11.0.0",
+            "fileVersion": "1.11.0.0"
           }
         }
       }
@@ -166,12 +249,82 @@
       "path": "cosmos.system2/0.1.0-localbuild20240919045346",
       "hashPath": "cosmos.system2.0.1.0-localbuild20240919045346.nupkg.sha512"
     },
+    "CosmosFtpServer/1.0.9": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-LSng4ldsAUGniIxb6GM0akQuRxuWHLbsMPPWjHgNZny1bl8L+OgjozabAxAx0bAsJlvmSgqSM0oP9GlHdT0PdQ==",
+      "path": "cosmosftpserver/1.0.9",
+      "hashPath": "cosmosftpserver.1.0.9.nupkg.sha512"
+    },
+    "CosmosHttp/1.0.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-WrsoH7PHrhEeHcf0R1xNM1i/eo8MPgC108WsJ6mcCCIR/4bxG6MlqiVSw1Uda2f/b1i9EZqONqDcVUGSSQd5wQ==",
+      "path": "cosmoshttp/1.0.4",
+      "hashPath": "cosmoshttp.1.0.4.nupkg.sha512"
+    },
     "IL2CPU.API/0.1.0-localbuild20240919045346": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-VxRNRFXO9YnlbddUnmQkIJtvcfK9xLjfPNgdKnbf2aHRotg2Wt3SrbISM8F8NNvhEOWurkfi00w6WaCoRRNZeA==",
       "path": "il2cpu.api/0.1.0-localbuild20240919045346",
       "hashPath": "il2cpu.api.0.1.0-localbuild20240919045346.nupkg.sha512"
+    },
+    "Microsoft.NETCore.Platforms/1.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-kz0PEW2lhqygehI/d6XsPCQzD7ff7gUJaVGPVETX611eadGsA3A877GdSlU0LRVMCTH/+P3o2iDTak+S08V2+A==",
+      "path": "microsoft.netcore.platforms/1.1.0",
+      "hashPath": "microsoft.netcore.platforms.1.1.0.nupkg.sha512"
+    },
+    "Microsoft.NETCore.Targets/1.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-aOZA3BWfz9RXjpzt0sRJJMjAscAUm3Hoa4UWAfceV9UTYxgwZ1lZt5nO2myFf+/jetYQo4uTP7zS8sJY67BBxg==",
+      "path": "microsoft.netcore.targets/1.1.0",
+      "hashPath": "microsoft.netcore.targets.1.1.0.nupkg.sha512"
+    },
+    "Microsoft.Win32.SystemEvents/8.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-9opKRyOKMCi2xJ7Bj7kxtZ1r9vbzosMvRrdEhVhDz8j8MoBGgB+WmC94yH839NPH+BclAjtQ/pyagvi/8gDLkw==",
+      "path": "microsoft.win32.systemevents/8.0.0",
+      "hashPath": "microsoft.win32.systemevents.8.0.0.nupkg.sha512"
+    },
+    "System.Drawing.Common/8.0.10": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-MdajRp3P+FOlThgY6FBjAqnmLiVl5t2yWEC/2AsDMqx1zYbJG3G5TnscFBQ4obqcaGqvN5UnhQHSFaJFG2HftQ==",
+      "path": "system.drawing.common/8.0.10",
+      "hashPath": "system.drawing.common.8.0.10.nupkg.sha512"
+    },
+    "System.Drawing.Primitives/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-1QU/c35gwdhvj77fkScXQQbjiVAqIL3fEYn/19NE0CV/ic5TN5PyWAft8HsrbRd4SBLEoErNCkWSzMDc0MmbRw==",
+      "path": "system.drawing.primitives/4.3.0",
+      "hashPath": "system.drawing.primitives.4.3.0.nupkg.sha512"
+    },
+    "System.Runtime/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-JufQi0vPQ0xGnAczR13AUFglDyVYt4Kqnz1AZaiKZ5+GICq0/1MH/mO/eAJHt/mHW1zjKBJd7kV26SrxddAhiw==",
+      "path": "system.runtime/4.3.0",
+      "hashPath": "system.runtime.4.3.0.nupkg.sha512"
+    },
+    "System.Runtime.Extensions/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-guW0uK0fn5fcJJ1tJVXYd7/1h5F+pea1r7FLSOz/f8vPEqbR2ZAknuRDvTQ8PzAilDveOxNjSfr0CHfIQfFk8g==",
+      "path": "system.runtime.extensions/4.3.0",
+      "hashPath": "system.runtime.extensions.4.3.0.nupkg.sha512"
+    },
+    "Zlib.Portable/1.11.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-T8FoSv/7DuP4ItfacfiD1a5Ra29e3ogZnK8KnaOhxooxHbNOf0Kj00DIyQqZupzVGB5BkluKJ1/aAFVtMYFUTw==",
+      "path": "zlib.portable/1.11.0",
+      "hashPath": "zlib.portable.1.11.0.nupkg.sha512"
     }
   }
 }

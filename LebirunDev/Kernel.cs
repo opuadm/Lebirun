@@ -20,7 +20,7 @@ namespace LebirunDev
         string grubMode = "normal";
         public static bool game1On = false;
         public static bool guiON = false;
-        public static string CurrentVersion = "0.1.0 Beta 1";
+        public static string CurrentVersion = "0.1.0 Beta 2";
         Canvas canvas;
 
         protected override void BeforeRun()

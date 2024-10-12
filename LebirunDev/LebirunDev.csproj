@@ -31,6 +31,10 @@
         <PackageReference Include="Cosmos.Debug.Kernel" Version="0-*" NoWarn="NU1604" />
         <PackageReference Include="Cosmos.System2" Version="0-*" NoWarn="NU1604" />
         <PackageReference Include="Cosmos.Plugs" Version="0-*" NoWarn="NU1604" />
+        <PackageReference Include="CosmosFtpServer" Version="1.0.9" />
+        <PackageReference Include="CosmosHttp" Version="1.0.4" />
+        <PackageReference Include="System.Drawing.Common" Version="8.0.10" />
+        <PackageReference Include="System.Drawing.Primitives" Version="4.3.0" />
     </ItemGroup>
 
 </Project>
