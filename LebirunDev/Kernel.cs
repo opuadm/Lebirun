@@ -23,8 +23,6 @@ namespace LebirunDev
         public static string CurrentVersion = "0.1.0 Beta 1";
         Canvas canvas;
 
-        // test
-
         protected override void BeforeRun()
         {
             LebirunDev.FileManager.FSLoad();
