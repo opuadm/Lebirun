@@ -12,22 +12,61 @@ namespace LebirunDev
 {
     public class BootManager
     {
-        public static float BootPage = 1;
+        public static float _bootPage = 1;
+        public static float _selectedItem = 1;
         public static Random rnd = new Random();
+
+        public static float BootPage
+        {
+            get { return _bootPage; }
+            set
+            {
+                if (_bootPage != value)
+                {
+                    _bootPage = value;
+                }
+            }
+        }
+
+        public static float SelectedItem
+        {
+            get { return _selectedItem; }
+            set
+            {
+                if (_selectedItem != value)
+                {
+                    _selectedItem = value;
+                    BootMenu();
+                }
+            }
+        }
 
         public static void BootMenu()
         {
             if (BootPage == 1)
             {
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.BackgroundColor = ConsoleColor.Blue;
-                Console.Clear();
-                Console.WriteLine("Lebirun Boot Menu");
-                Console.WriteLine("Type page:<number> for different page | Current Page: 1");
-                Console.WriteLine("Normal Boot | 1");
-                Console.WriteLine("GUI Boot | 2");
+                if (SelectedItem == 1)
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.BackgroundColor = ConsoleColor.Blue;
+                    Console.Clear();
+                    Console.WriteLine("Lebirun Boot Menu");
+                    Console.WriteLine("Type page:<number> for different page | Current Page: 1");
+                    Console.WriteLine("* Normal Boot | 1");
+                    Console.WriteLine("GUI Boot | 2");
+                }
+                else if (SelectedItem == 2)
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.BackgroundColor = ConsoleColor.Blue;
+                    Console.Clear();
+                    Console.WriteLine("Lebirun Boot Menu");
+                    Console.WriteLine("Type page:<number> for different page | Current Page: 1");
+                    Console.WriteLine("Normal Boot | 1");
+                    Console.WriteLine("* GUI Boot | 2");
+                }
             }
-            BootMenuInput();
+            // BootMenuInput();
         }
 
         public static void SetRes()
@@ -36,7 +75,7 @@ namespace LebirunDev
             VGAScreen.SetTextMode(Cosmos.HAL.Drivers.Video.VGADriver.TextSize.Size80x25);
         }
 
-        public static void BootMenuInput()
+        /* public static void BootMenuInput()
         {
             var input = Console.ReadLine();
             if (BootPage == 1)
@@ -68,6 +107,6 @@ namespace LebirunDev
                     BootMenuInput();
                 }
             }
-        }
+        } */
     }
 }

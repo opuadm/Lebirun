@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyDescriptionAttribute("Use VMware Player or Workstation to deploy and debug.")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+218616c728c4c5f7665961be650093dd59486d83")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+88f9902fa70e0579cd04f7c9de23d4b0205b8613")]
 [assembly: System.Reflection.AssemblyProductAttribute("LebirunDev")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LebirunDev")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

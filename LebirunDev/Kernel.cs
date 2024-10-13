@@ -10,6 +10,7 @@ using Sys = Cosmos.System;
 using System.IO;
 using Cosmos.Core_Plugs.System;
 using Cosmos.System.FileSystem.VFS;
+using System.Security.Cryptography.X509Certificates;
 
 namespace LebirunDev
 {
@@ -21,6 +22,7 @@ namespace LebirunDev
         public static bool game1On = false;
         public static bool guiON = false;
         public static string CurrentVersion = "0.1.0 Beta 2";
+        public static bool BootMgrOn = false;
         Canvas canvas;
 
         protected override void BeforeRun()
@@ -29,6 +31,7 @@ namespace LebirunDev
             Console.Clear();
             LebirunDev.BootManager.SetRes();
             LebirunDev.BootManager.BootMenu();
+            BootMgrOn = true;
         }
 
         protected override void Run()
@@ -45,6 +48,52 @@ namespace LebirunDev
             else if (guiON)
             {
                 LebirunDev.VGA.VGAgui();
+            }
+            else if (BootMgrOn)
+            {
+                ConsoleKeyInfo custominput = Console.ReadKey();
+
+                if (custominput.Key == ConsoleKey.UpArrow)
+                {
+                    if (BootManager.SelectedItem > 1)
+                    {
+                        BootManager.SelectedItem -= 1;
+                    }
+                }
+
+                if (custominput.Key == ConsoleKey.DownArrow)
+                {
+                    if (BootManager.SelectedItem < 2)
+                    {
+                        BootManager.SelectedItem += 1;
+                    }
+                }
+                if (custominput.Key == ConsoleKey.Enter)
+                {
+                    if (BootManager.SelectedItem == 1)
+                    {
+                        BootMgrOn = false;
+                        Console.Clear();
+                        Console.WriteLine("Starting Lebirun 0.1.0 Alpha");
+                        Thread.Sleep(BootManager.rnd.Next(0, 670));
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.BackgroundColor = ConsoleColor.Black;
+                        Console.Clear();
+                        LebirunDev.LoginMgr.login();
+                    }
+                    else if (BootManager.SelectedItem == 2)
+                    {
+                        BootMgrOn = false;
+                        Console.Clear();
+                        Console.WriteLine("Starting Lebirun 0.1.0 Alpha - GUI Mode");
+                        LebirunDev.Kernel.guiON = true;
+                        Thread.Sleep(BootManager.rnd.Next(0, 2300));
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.BackgroundColor = ConsoleColor.Black;
+                        Console.Clear();
+                        LebirunDev.LoginMgr.login();
+                    }
+                }
             }
             else
             {
