@@ -7,28 +7,54 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Sys = Cosmos.System;
+using Cosmos.System;
+using Cosmos.Debug.Kernel.Plugs.Asm;
 
 namespace LebirunDev
 {
     public class VGA
     {
+        public static bool menuOpen = false;
+        public static bool isLeftMouseButtonPressed = false;
         public static Canvas canvas;
 
         public static void VGAgui()
         {
             canvas = FullScreenCanvas.GetFullScreenCanvas(new Mode(640, 480, ColorDepth.ColorDepth32));
-            canvas.Clear();
 
             canvas.DrawFilledRectangle(Color.MediumPurple, 0, 0, 640, 480);
 
-            canvas.DrawFilledRectangle(Color.GhostWhite, 0, 465, 640, 15);
+            canvas.DrawFilledRectangle(Color.GhostWhite, 0, 445, 640, 35);
 
-            Sys.MouseManager.ScreenWidth = (uint)635;
+            canvas.DrawFilledRectangle(Color.FromArgb(40, 0, 13, 54), 4, 450, 70, 25);
+
+            if (menuOpen)
+            {
+                canvas.DrawFilledRectangle(Color.Firebrick, 4, 280, 200, 165);
+            }
+
+            Sys.MouseManager.ScreenWidth = (uint)633;
             Sys.MouseManager.ScreenHeight = (uint)480;
             int X = (int)Sys.MouseManager.X;
             int Y = (int)Sys.MouseManager.Y;
 
-            canvas.DrawFilledRectangle(Color.Brown, (int)Sys.MouseManager.X, (int)Sys.MouseManager.Y, 5, 8);
+            canvas.DrawFilledRectangle(Color.Brown, (int)Sys.MouseManager.X, (int)Sys.MouseManager.Y, 6, 14);
+
+            if (MouseManager.MouseState == MouseState.Left)
+            {
+                if (!isLeftMouseButtonPressed)
+                {
+                    if (MouseManager.X >= 4 && MouseManager.X <= 74 && MouseManager.Y >= 450 && MouseManager.Y <= 475)
+                    {
+                        menuOpen = !menuOpen;
+                    }
+                    isLeftMouseButtonPressed = true;
+                }
+            }
+            else
+            {
+                isLeftMouseButtonPressed = false;
+            }
 
             canvas.Display();
 
