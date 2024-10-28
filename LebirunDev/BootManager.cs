@@ -36,6 +36,7 @@ namespace LebirunDev
                 if (_selectedItem != value)
                 {
                     _selectedItem = value;
+                    Console.Clear();
                     BootMenu();
                 }
             }
@@ -49,21 +50,27 @@ namespace LebirunDev
                 {
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.BackgroundColor = ConsoleColor.Blue;
-                    Console.Clear();
-                    Console.WriteLine("Lebirun Boot Menu");
+                    /* Console.WriteLine("Lebirun Boot Menu");
                     Console.WriteLine("Type page:<number> for different page | Current Page: 1");
                     Console.WriteLine("* Normal Boot | 1");
-                    Console.WriteLine("GUI Boot | 2");
+                    Console.WriteLine("GUI Boot | 2"); */
+                    Console.Write("Lebirun Boot Menu".PadRight(Console.WindowWidth));
+                    Console.Write("* Normal Boot | 1".PadRight(Console.WindowWidth));
+                    Console.Write("GUI Boot | 2".PadRight(Console.WindowWidth));
+                    Console.ResetColor();
                 }
                 else if (SelectedItem == 2)
                 {
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.BackgroundColor = ConsoleColor.Blue;
-                    Console.Clear();
-                    Console.WriteLine("Lebirun Boot Menu");
+                    /* Console.WriteLine("Lebirun Boot Menu");
                     Console.WriteLine("Type page:<number> for different page | Current Page: 1");
                     Console.WriteLine("Normal Boot | 1");
-                    Console.WriteLine("* GUI Boot | 2");
+                    Console.WriteLine("* GUI Boot | 2"); */
+                    Console.Write("Lebirun Boot Menu".PadRight(Console.WindowWidth));
+                    Console.Write("Normal Boot | 1".PadRight(Console.WindowWidth));
+                    Console.Write("* GUI Boot | 2".PadRight(Console.WindowWidth));
+                    Console.ResetColor();
                 }
             }
             // BootMenuInput();

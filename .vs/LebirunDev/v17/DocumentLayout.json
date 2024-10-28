@@ -3,12 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\OpuaY\\source\\repos\\LebirunDev\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{172BBB3B-8A21-4644-B1BC-8ED7281D2229}|LebirunDev\\LebirunDev.csproj|c:\\users\\opuay\\source\\repos\\lebirundev\\lebirundev\\vga.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{172BBB3B-8A21-4644-B1BC-8ED7281D2229}|LebirunDev\\LebirunDev.csproj|solutionrelative:lebirundev\\vga.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{172BBB3B-8A21-4644-B1BC-8ED7281D2229}|LebirunDev\\LebirunDev.csproj|c:\\users\\opuay\\source\\repos\\lebirundev\\lebirundev\\kernel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{172BBB3B-8A21-4644-B1BC-8ED7281D2229}|LebirunDev\\LebirunDev.csproj|solutionrelative:lebirundev\\kernel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{172BBB3B-8A21-4644-B1BC-8ED7281D2229}|LebirunDev\\LebirunDev.csproj|c:\\users\\opuay\\source\\repos\\lebirundev\\lebirundev\\man.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{172BBB3B-8A21-4644-B1BC-8ED7281D2229}|LebirunDev\\LebirunDev.csproj|solutionrelative:lebirundev\\man.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{172BBB3B-8A21-4644-B1BC-8ED7281D2229}|LebirunDev\\LebirunDev.csproj|c:\\users\\opuay\\source\\repos\\lebirundev\\lebirundev\\bootmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{172BBB3B-8A21-4644-B1BC-8ED7281D2229}|LebirunDev\\LebirunDev.csproj|solutionrelative:lebirundev\\bootmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,32 +22,45 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "VGA.cs",
-              "DocumentMoniker": "C:\\Users\\OpuaY\\source\\repos\\LebirunDev\\LebirunDev\\VGA.cs",
-              "RelativeDocumentMoniker": "LebirunDev\\VGA.cs",
-              "ToolTip": "C:\\Users\\OpuaY\\source\\repos\\LebirunDev\\LebirunDev\\VGA.cs",
-              "RelativeToolTip": "LebirunDev\\VGA.cs",
-              "ViewState": "AgIAAAQAAAAAAAAAAAAAABEAAAA8AAAAAAAAAA==",
+              "DocumentIndex": 1,
+              "Title": "Man.cs",
+              "DocumentMoniker": "C:\\Users\\OpuaY\\source\\repos\\LebirunDev\\LebirunDev\\Man.cs",
+              "RelativeDocumentMoniker": "LebirunDev\\Man.cs",
+              "ToolTip": "C:\\Users\\OpuaY\\source\\repos\\LebirunDev\\LebirunDev\\Man.cs",
+              "RelativeToolTip": "LebirunDev\\Man.cs",
+              "ViewState": "AgIAAG8AAAAAAAAAAAAAANIAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-23T14:28:19.398Z",
+              "WhenOpened": "2024-10-27T21:28:53.659Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "Kernel.cs",
               "DocumentMoniker": "C:\\Users\\OpuaY\\source\\repos\\LebirunDev\\LebirunDev\\Kernel.cs",
               "RelativeDocumentMoniker": "LebirunDev\\Kernel.cs",
               "ToolTip": "C:\\Users\\OpuaY\\source\\repos\\LebirunDev\\LebirunDev\\Kernel.cs",
               "RelativeToolTip": "LebirunDev\\Kernel.cs",
-              "ViewState": "AgIAABgAAAAAAAAAAAAAABYAAAApAAAAAAAAAA==",
+              "ViewState": "AgIAABwAAAAAAAAAAAAAAC8AAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-12T13:36:46.517Z"
+              "WhenOpened": "2024-10-27T21:22:29.365Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "BootManager.cs",
+              "DocumentMoniker": "C:\\Users\\OpuaY\\source\\repos\\LebirunDev\\LebirunDev\\BootManager.cs",
+              "RelativeDocumentMoniker": "LebirunDev\\BootManager.cs",
+              "ToolTip": "C:\\Users\\OpuaY\\source\\repos\\LebirunDev\\LebirunDev\\BootManager.cs",
+              "RelativeToolTip": "LebirunDev\\BootManager.cs",
+              "ViewState": "AgIAADkAAAAAAAAAAAAAAAMAAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-27T21:12:53.194Z"
             }
           ]
         }

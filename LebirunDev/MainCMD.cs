@@ -11,6 +11,7 @@ using System.IO;
 using Cosmos.Core_Plugs.System;
 using Cosmos.System.FileSystem.VFS;
 using System.Security.Cryptography.X509Certificates;
+using LebirunDev.FakeGRUB;
 
 namespace LebirunDev
 {
@@ -73,16 +74,16 @@ namespace LebirunDev
                 if (input == "grub --noclearafter")
                 {
                     grubMode = "noclearafter";
-                    LebirunDev.GRUBScreen.grubText(grubMode: grubMode);
+                    GRUBScreen.grubText(grubMode: grubMode);
                 }
                 else if (input == "grubrescue")
                 {
-                    LebirunDev.GrubRescueFake.grubRescueFake();
+                    GrubRescueFake.grubRescueFake();
                 }
                 else
                 {
                     grubMode = "normal";
-                    LebirunDev.GRUBScreen.grubText(grubMode: grubMode);
+                    GRUBScreen.grubText(grubMode: grubMode);
                 }
             }
             else if (input == "root")
@@ -248,6 +249,107 @@ namespace LebirunDev
             else if (input == "shutdown" || input == "poweroff")
             {
                 Sys.Power.Shutdown();
+            }
+            else if (input.StartsWith("knowledge"))
+            {
+                if (input == "knowledge help" || input == "knowledge cmds")
+                {
+                    Kernel.ManOn = true;
+                    Man.CurCommand = "help";
+                    Man.ManPagesHandler();
+                }
+                else if (input == "knowledge iptv")
+                {
+                    Console.WriteLine("No need to explain.");
+                }
+                else if (input == "knowledge metamask")
+                {
+                    Console.WriteLine("No need to explain.");
+                }
+                else if (input == "knowledge echo")
+                {
+                    Console.WriteLine("No need to explain.");
+                }
+                else if (input == "knowledge clear" || input == "knowledge minireboot")
+                {
+                    Kernel.ManOn = true;
+                    Man.CurCommand = "clear";
+                    Man.ManPagesHandler();
+                }
+                else if (input == "knowledge grub")
+                {
+                    Kernel.ManOn = true;
+                    Man.CurCommand = "grub";
+                    Man.ManPagesHandler();
+                }
+                else if (input == "knowledge grubrescue")
+                {
+                    Kernel.ManOn = true;
+                    Man.CurCommand = "grubrescue";
+                    Man.ManPagesHandler();
+                }
+                else if (input == "knowledge root")
+                {
+                    Console.WriteLine("No need to explain, because it just prints a text.");
+                }
+                else if (input == "knowledge blankspaces")
+                {
+                    Console.WriteLine("No need to explain.");
+                }
+                else if (input == "knowledge 46" || input == "knowledge 92" || input == "knowledge 93")
+                {
+                    Console.WriteLine("No need to explain.");
+                }
+                else if (input == "knowledge game1")
+                {
+                    Kernel.ManOn = true;
+                    Man.CurCommand = "game1";
+                    Man.ManPagesHandler();
+                }
+                else if (input == "knowledge productman")
+                {
+                    Kernel.ManOn = true;
+                    Man.CurCommand = "productman";
+                    Man.ManPagesHandler();
+                }
+                else if (input == "knowledge logout" || input == "knowledge logoff")
+                {
+                    Console.WriteLine("No need to explain.");
+                }
+                else if (input == "knowledge whoami")
+                {
+                    Console.WriteLine("No need to explain.");
+                }
+                else if (input == "knowledge su")
+                {
+                    Kernel.ManOn = true;
+                    Man.CurCommand = "su";
+                    Man.ManPagesHandler();
+                }
+                else if (input == "knowledge website")
+                {
+                    Console.WriteLine("No need to explain.");
+                }
+                else if (input == "knowledge infofetch")
+                {
+                    Console.WriteLine("No need to explain.");
+                }
+                else if (input == "knowledge knowledge")
+                {
+                    Console.WriteLine("Dude.");
+                }
+                else if (input == "knowledge shutdown" || input == "knowledge poweroff")
+                {
+                    Console.WriteLine("No need to explain.");
+                }
+                else if (input == "knowledge reboot" || input == "knowledge restart")
+                {
+                    Console.WriteLine("No need to explain.");
+                }
+                else
+                {
+                    Console.WriteLine("Unknown knowledge command.");
+                }
             }
             else
             {

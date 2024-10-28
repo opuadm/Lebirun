@@ -20,6 +20,7 @@
         <DebugEnabled>False</DebugEnabled>
         <RemoveBootDebugOutput>True</RemoveBootDebugOutput>
         <Title>Lebirun</Title>
+        <OptimizationLevel>2</OptimizationLevel>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

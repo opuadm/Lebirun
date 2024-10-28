@@ -11,6 +11,9 @@ using System.IO;
 using Cosmos.Core_Plugs.System;
 using Cosmos.System.FileSystem.VFS;
 using System.Security.Cryptography.X509Certificates;
+using Cosmos.Core;
+using LebirunDev.GUI;
+using LebirunDev.FakeGRUB;
 
 namespace LebirunDev
 {
@@ -23,15 +26,17 @@ namespace LebirunDev
         public static bool guiON = false;
         public static string CurrentVersion = "0.1.0 Beta 2";
         public static bool BootMgrOn = false;
+        public static bool ManOn = false;
         Canvas canvas;
 
         protected override void BeforeRun()
         {
-            LebirunDev.FileManager.FSLoad();
+            FileManager.FSLoad();
             Console.Clear();
-            LebirunDev.BootManager.SetRes();
-            LebirunDev.BootManager.BootMenu();
+            BootManager.SetRes();
+            BootManager.BootMenu();
             BootMgrOn = true;
+            Man.InitializePages();
         }
 
         protected override void Run()
@@ -39,19 +44,23 @@ namespace LebirunDev
 
             if (grubRescueOn)
             {
-                LebirunDev.GrubRescueFake.grubRescueFake1();
+                GrubRescueFake.grubRescueFake1();
             }
             else if (game1On)
             {
-                LebirunDev.Game1.TheGameItself();
+                Game1.TheGameItself();
             }
             else if (guiON)
             {
-                LebirunDev.VGA.VGAgui();
+                VGA.VGAgui();
             }
             else if (BootMgrOn)
             {
                 BootManagerInput.BootManagerInputClass();
+            }
+            else if (ManOn)
+            {
+
             }
             else
             {
