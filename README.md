@@ -1,2 +1,2 @@
 # !! IMPORTANT INFO !!
-### This OS might get recreated in C, so no progress for now.
+### This OS is currently being recreated in C and Assembly. Please check "Unstable" branch for updates.
