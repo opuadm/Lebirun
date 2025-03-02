@@ -5,27 +5,27 @@ LD=ld
 
 # Compiler flags
 CFLAGS=-m32 \
-       -fno-pie \
-       -fno-stack-protector \
-       -nostdlib \
-       -nostdinc \
-       -fno-builtin \
-       -fno-exceptions \
-       -Wall \
-       -Wextra \
-       -I./kernel
+	-fno-pie \
+	-fno-stack-protector \
+	-nostdlib \
+	-nostdinc \
+	-fno-builtin \
+	-fno-exceptions \
+	-Wall \
+	-Wextra \
+	-I./kernel
 
 # Linker flags
 LDFLAGS=-m elf_i386 \
-        -nostdlib \
-        -Tlinker.ld
+	-nostdlib \
+	-Tlinker.ld
 
 # Object files
 KERNEL_OBJS=build/kernel_entry.o \
-            build/kernel.o \
-            build/keyboard.o \
-            build/screen.o \
-            build/shell.o
+	build/kernel.o \
+	build/keyboard.o \
+	build/screen.o \
+	build/shell.o
 
 # Default target
 all: build/lebirun.iso

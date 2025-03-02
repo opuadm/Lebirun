@@ -1,5 +1,6 @@
 #include "screen.h"
 #include "keyboard.h"
+#include "about.h"
 
 #define MAX_COMMANDS_PER_PAGE 6
 
@@ -11,8 +12,8 @@ struct HelpPage {
 struct HelpPage help_pages[2] = {
     // Page 1
     {
-        {"help", "clear", "echo", "reboot", "version", ""},
-        {"Show help pages", "Clear screen", "Print text", "Restart system", "Show system version", ""}
+        {"help", "clear", "echo", "about", "", ""},
+        {"Show help pages", "Clear screen", "Print text", "Show info about this OS", "", ""}
     },
     // Page 2
     {
@@ -147,8 +148,6 @@ void execute_command(char* cmd) {
 
     if(strcmp(cmd, "clear") == 0) {
         clear_screen();
-        print_string("Lebirun 0.1.0 Beta 2\n");
-        print_string("Type \"help\" for the list of currently available commands\n");
     }
     else if(strncmp(cmd, "help", 4) == 0) {
         int page = 1;  // Default to first page
@@ -166,7 +165,7 @@ void execute_command(char* cmd) {
         display_help_page(page);  // Passes the page number
     }
     else if(strcmp(cmd, "about") == 0) {
-        print_string("Lebirun OS v0.1.0 Beta 2\n");
+        print_string(OS_NAME " v" OS_VERSION "\n");
         print_string("A simple operating system made with C and Assembly\n");
     }
     else if(strncmp(cmd, "echo", 4) == 0) {
