@@ -1,6 +1,7 @@
 #include "screen.h"
 #include "keyboard.h"
 #include "about.h"
+#include "power.h"
 
 #define MAX_COMMANDS_PER_PAGE 6
 
@@ -12,8 +13,8 @@ struct HelpPage {
 struct HelpPage help_pages[2] = {
     // Page 1
     {
-        {"help", "clear", "echo", "about", "", ""},
-        {"Show help pages", "Clear screen", "Print text", "Show info about this OS", "", ""}
+        {"help", "clear", "echo", "about", "shutdown", "reboot"},
+        {"Show help pages", "Clear screen", "Print text", "Show info about this OS", "Shutdowns your computer", "Restarts your computer"}
     },
     // Page 2
     {
@@ -176,6 +177,14 @@ void execute_command(char* cmd) {
         } else {
             print_string("Usage: echo <text>\n");
         }
+    }
+    else if(strcmp(cmd, "shutdown") == 0) {
+        print_string("Initiating system shutdown...\n");
+        shutdown_system();
+    }
+    else if(strcmp(cmd, "reboot") == 0) {
+        print_string("Initiating system reboot...\n");
+        reboot_system();
     }
     else {
         print_string("Unknown command: ");
