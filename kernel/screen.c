@@ -1,12 +1,6 @@
-// =============================================================================
-// Screen Driver Implementation
-// High Resolution Framebuffer Driver with VGA/SVGA Support
-// Date: 2025-03-01 21:15:38 UTC
-// =============================================================================
-
 #include "screen.h"
-#include "font_data.h"
-#include "types.h"
+#include "data/font_data.h"
+#include "data/types.h"
 
 typedef enum { FALSE = 0, TRUE = 1 } boolean;
 #define NULL ((void*)0)

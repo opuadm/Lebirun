@@ -1,0 +1,11 @@
+{
+    "[makefile]": {
+        "editor.insertSpaces": false,
+        "editor.detectIndentation": false,
+        "editor.tabSize": 4
+    },
+    "files.associations": {
+        "Makefile*": "makefile"
+    },
+    "makefile.configureOnOpen": false
+}

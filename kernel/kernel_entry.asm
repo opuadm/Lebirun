@@ -1,10 +1,3 @@
-; =============================================================================
-; Enhanced Kernel Entry Point
-; Date: 2025-03-01 19:09:13 UTC
-; Author: opuadm
-; Purpose: Advanced multiboot compliant kernel entry with hardware checks
-; =============================================================================
-
 [BITS 32]
 
 ; Multiboot constants
@@ -54,9 +47,13 @@ stack_top:
 
 section .data
 align 4
+global cpu_features
 cpu_features:           dd 0
+global memory_size
 memory_size:           dd 0
+global video_mode
 video_mode:            dd 0
+global error_codes
 error_codes:           dd 0
 
 ; Error messages
@@ -71,40 +68,128 @@ align 4
 global _start
 extern kmain
 
-; CPU feature detection
-check_cpu_features:
-    pushad
-    mov eax, 1
-    cpuid
-    mov [cpu_features], edx
-    popad
-    ret
-
-; Memory validation
+; Memory validation and extraction - completely rewritten
 check_memory:
     pushad
-    mov eax, [ebx + 8]     ; Get memory size from multiboot
-    cmp eax, MIN_MEMORY
-    jl .memory_error
+    
+    ; Check if memory info is available in multiboot flags
+    mov eax, [ebx]
+    bt eax, 0           ; Test bit 0 (memory info present)
+    jc .use_mem_info    ; If set, use mem_lower/mem_upper
+    
+    bt eax, 6           ; Test bit 6 (mmap info present)
+    jc .use_mmap        ; If set, use memory map
+    
+    ; If we don't have either memory info, use a conservative default
+    mov dword [memory_size], 16 * 1024 * 1024  ; 16MB default
+    jmp .done
+    
+.use_mem_info:
+    ; Get memory size from mem_lower and mem_upper (in KB)
+    mov eax, [ebx + 4]  ; mem_lower in KB (usually 640)
+    mov edx, [ebx + 8]  ; mem_upper in KB (extends beyond 1MB)
+    
+    ; Convert to bytes and add together
+    shl eax, 10         ; Convert to bytes (mem_lower)
+    shl edx, 10         ; Convert to bytes (mem_upper)
+    add eax, edx
+    add eax, 1024 * 1024 ; Add 1MB (mem_upper starts counting after 1MB)
+    
+    ; Store memory size
     mov [memory_size], eax
+    jmp .done
+    
+.use_mmap:
+    ; Initialize memory counter
+    xor edi, edi        ; Total memory size
+    
+    ; Get memory map address and length
+    mov esi, [ebx + 44] ; mmap_addr
+    mov ecx, [ebx + 48] ; mmap_length
+    add ecx, esi        ; End of mmap
+    
+.mmap_loop:
+    cmp esi, ecx        ; Check if we've reached the end
+    jge .mmap_done
+    
+    ; Check entry type (1 = available RAM)
+    mov edx, [esi + 16] ; entry type
+    cmp edx, 1
+    jne .next_mmap_entry
+    
+    ; Get base address and length of this memory region
+    ; Note: We only use the lower 32 bits for simplicity
+    ; This should be fine for our purposes (up to 4GB RAM)
+    mov eax, [esi + 8]  ; base_addr (low)
+    mov edx, [esi + 0]  ; length (low)
+    
+    ; Add this region's size to total
+    ; But only if it starts below 4GB
+    test dword [esi + 12], 0xFFFFFFFF  ; base_addr (high)
+    jnz .next_mmap_entry  ; Skip if base_addr is >= 4GB
+    
+    ; For regions that start after the first 1MB:
+    add edi, edx
+
+.next_mmap_entry:
+    ; Move to next entry (size + 4 bytes)
+    mov eax, [esi]      ; size field
+    add eax, 4          ; add 4 for the size field itself
+    add esi, eax        ; move to next entry
+    jmp .mmap_loop
+    
+.mmap_done:
+    ; Check if we found any memory
+    test edi, edi
+    jz .use_default
+    
+    ; Cap memory at 4GB-1MB for safety
+    mov eax, 0xFFF00000  ; 4GB - 1MB
+    cmp edi, eax
+    jbe .store_mmap_size
+    mov edi, eax
+    
+.store_mmap_size:
+    ; Store memory size, ensuring at least 16MB
+    mov [memory_size], edi
+    cmp edi, 16 * 1024 * 1024
+    ja .done
+    
+.use_default:
+    ; Use a safe default if memory detection failed or found too little
+    mov dword [memory_size], 16 * 1024 * 1024  ; 16MB default
+    
+.done:
+    ; Verify we have at least minimum memory
+    cmp dword [memory_size], MIN_MEMORY
+    ja .memory_ok
+    mov dword [memory_size], MIN_MEMORY
+    
+.memory_ok:
     popad
     ret
-.memory_error:
-    mov dword [error_codes], ERR_NO_MEMORY
-    jmp error_handler
 
 ; Video mode validation
 check_video_mode:
     pushad
-    mov eax, [ebx + 72]    ; Get video mode from multiboot
+    ; Check for video info flag
+    mov eax, [ebx]
+    bt eax, 12
+    jnc .video_default
+    
+    ; Get VBE info
+    mov eax, [ebx + 72]
     test eax, eax
-    jz .video_error
+    jz .video_default
     mov [video_mode], eax
     popad
     ret
-.video_error:
-    mov dword [error_codes], ERR_INVALID_VIDEO
-    jmp error_handler
+    
+.video_default:
+    ; Default to basic mode
+    mov dword [video_mode], 1
+    popad
+    ret
 
 ; Error display routine
 error_handler:
@@ -125,47 +210,36 @@ error_handler:
     jmp $
 
 _start:
-    cli                    ; Disable interrupts
-
-    ; Validate multiboot
+    ; Disable interrupts during initialization
+    cli
+    
+    ; Check multiboot signature
     cmp eax, 0x2BADB002
     jne .no_multiboot
-
-    ; Save multiboot info
-    push ebx
-
-    ; Initialize stack
+    
+    ; Set up stack
     mov esp, stack_top
-    and esp, -16           ; Align stack
-
+    and esp, -16           ; Align stack to 16 bytes
+    
     ; Clear direction flag
     cld
-
-    ; Initialize registers
-    xor eax, eax
-    xor ecx, ecx
-    xor edx, edx
-    xor esi, esi
-    xor edi, edi
-    xor ebp, ebp
-
-    ; Check CPU features
-    call check_cpu_features
-
-    ; Check memory
+    
+    ; Save multiboot info pointer
+    push ebx
+    
+    ; Extract memory information - completely rewritten
     call check_memory
-
+    
     ; Check video mode
+    pop ebx              ; Restore multiboot info pointer
+    push ebx             ; Save it again for later
     call check_video_mode
-
-    ; All checks passed, restore multiboot info
-    pop ebx
-
-    ; Save registers for kernel
-    push ebx              ; Multiboot info
-    push eax              ; Magic number
-
+    
     ; Call kernel
+    mov eax, [memory_size]
+    pop ebx              ; Restore multiboot info pointer
+    push ebx             ; Pass multiboot info as 2nd parameter
+    push eax             ; Pass memory size as 1st parameter
     call kmain
 
     ; If kernel returns, halt
@@ -183,42 +257,3 @@ global debug_break
 debug_break:
     xchg bx, bx          ; Bochs debug breakpoint
     ret
-
-; CPU feature bits for reference
-CPU_FEATURE_FPU    equ 1 << 0
-CPU_FEATURE_VME    equ 1 << 1
-CPU_FEATURE_DE     equ 1 << 2
-CPU_FEATURE_PSE    equ 1 << 3
-CPU_FEATURE_TSC    equ 1 << 4
-CPU_FEATURE_MSR    equ 1 << 5
-CPU_FEATURE_PAE    equ 1 << 6
-CPU_FEATURE_MCE    equ 1 << 7
-CPU_FEATURE_CX8    equ 1 << 8
-CPU_FEATURE_APIC   equ 1 << 9
-
-; System state preservation
-global save_system_state
-save_system_state:
-    pushad
-    mov [system_state.eax], eax
-    mov [system_state.ebx], ebx
-    mov [system_state.ecx], ecx
-    mov [system_state.edx], edx
-    mov [system_state.esi], esi
-    mov [system_state.edi], edi
-    mov [system_state.ebp], ebp
-    mov [system_state.esp], esp
-    popad
-    ret
-
-section .data
-align 4
-system_state:
-    .eax dd 0
-    .ebx dd 0
-    .ecx dd 0
-    .edx dd 0
-    .esi dd 0
-    .edi dd 0
-    .ebp dd 0
-    .esp dd 0

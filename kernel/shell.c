@@ -1,9 +1,15 @@
 #include "screen.h"
 #include "keyboard.h"
-#include "about.h"
+#include "data/about.h"
 #include "power.h"
+#include "mm.h"
 
-#define MAX_COMMANDS_PER_PAGE 6
+/* Boolean type for readability */
+typedef enum { FALSE = 0, TRUE = 1 } boolean;
+
+#define MAX_COMMANDS_PER_PAGE 8
+#define MAX_ARGS 8
+#define MAX_ARG_LENGTH 64
 
 struct HelpPage {
     char commands[MAX_COMMANDS_PER_PAGE][20];
@@ -13,48 +19,19 @@ struct HelpPage {
 struct HelpPage help_pages[2] = {
     // Page 1
     {
-        {"help", "clear", "echo", "about", "shutdown", "reboot"},
-        {"Show help pages", "Clear screen", "Print text", "Show info about this OS", "Shutdowns your computer", "Restarts your computer"}
+        {"help", "clear", "echo", "about", "shutdown", "reboot", "root", "meminfo"},
+        {"Show help pages", "Clear screen", "Print text", "Show OS info", "Shutdown computer", "Restart computer", "R00T (Joke Command)", "Show memory info [--kb]"}
     },
     // Page 2
     {
-        {"", "", "", "", "", ""},  // Add actual commands for page 2 if needed
-        {"", "", "", "", "", ""}
+        {"", "", "", "", "", "", "", ""},
+        {"", "", "", "", "", "", "", ""}
     }
 };
 
 int total_help_pages = 2;
 
-void display_help_page(int page_num) {
-    // Validate page number
-    if (page_num < 1 || page_num > total_help_pages) {
-        print_string("Invalid page number. Available pages are: 1 and 2\n");
-        return;
-    }
-
-    // Adjust page number to zero-based index
-    page_num--;
-
-    // Print page header
-    print_string("Help Page ");
-    char page_str[2];
-    page_str[0] = page_num + 1 + '0';  // Convert to character
-    page_str[1] = '\0';
-    print_string(page_str);
-    print_string(":\n");
-
-    // Display commands for the specific page
-    for (int i = 0; i < MAX_COMMANDS_PER_PAGE; i++) {
-        if (help_pages[page_num].commands[i][0] != '\0') {
-            print_string(help_pages[page_num].commands[i]);
-            print_string(" - ");
-            print_string(help_pages[page_num].descriptions[i]);
-            print_string("\n");
-        }
-    }
-}
-
-// String comparison function
+// String operations
 int strcmp(const char* str1, const char* str2) {
     while (*str1 && *str2) {
         if (*str1 != *str2) {
@@ -66,7 +43,6 @@ int strcmp(const char* str1, const char* str2) {
     return *str1 - *str2;
 }
 
-// Partial string comparison function
 int strncmp(const char* str1, const char* str2, unsigned int n) {
     while (n > 0 && *str1 && *str2) {
         if (*str1 != *str2) {
@@ -81,7 +57,12 @@ int strncmp(const char* str1, const char* str2, unsigned int n) {
     return *str1 - *str2;
 }
 
-// String to integer conversion
+char* strcpy(char* dest, const char* src) {
+    char* original_dest = dest;
+    while ((*dest++ = *src++));
+    return original_dest;
+}
+
 int str_to_int(const char* str) {
     int result = 0;
     int sign = 1;
@@ -103,15 +84,43 @@ int str_to_int(const char* str) {
     return sign * result;
 }
 
-// Integer printing function
-int print_int(int num) {
+void display_help_page(int page_num) {
+    // Validate page number
+    if (page_num < 1 || page_num > total_help_pages) {
+        print_string("Invalid page number. Available pages: 1-");
+        print_char(total_help_pages + '0');
+        print_string("\n");
+        return;
+    }
+
+    // Adjust page number to zero-based index
+    page_num--;
+
+    // Print page header
+    print_string("Help Page ");
+    print_char(page_num + 1 + '0');
+    print_string(":\n");
+
+    // Display commands for the specific page
+    for (int i = 0; i < MAX_COMMANDS_PER_PAGE; i++) {
+        if (help_pages[page_num].commands[i][0] != '\0') {
+            print_string(help_pages[page_num].commands[i]);
+            print_string(" - ");
+            print_string(help_pages[page_num].descriptions[i]);
+            print_string("\n");
+        }
+    }
+}
+
+// Print integer
+void print_int(int num) {
     char buffer[12];  // Enough for a 32-bit integer
     int i = 0;
     int is_negative = 0;
 
     if (num == 0) {
         print_char('0');
-        return 0;
+        return;
     }
 
     if (num < 0) {
@@ -131,64 +140,163 @@ int print_int(int num) {
     while (i > 0) {
         print_char(buffer[--i]);
     }
-
-    return 0;
 }
 
+// Split command into arguments
+int parse_args(char* cmd, char* args[MAX_ARGS]) {
+    int count = 0;
+    int in_quotes = 0;
+    char* p = cmd;
+    
+    // Skip leading spaces
+    while (*p == ' ') p++;
+    
+    // If empty command, return 0 args
+    if (*p == '\0') return 0;
+    
+    args[count++] = p; // First argument is the command itself
+    
+    while (*p && count < MAX_ARGS) {
+        if (*p == '"') {
+            in_quotes = !in_quotes;
+            // Remove the quote by shifting everything left
+            char* q = p;
+            while (*q) {
+                *q = *(q+1);
+                q++;
+            }
+            continue;
+        }
+        
+        if (*p == ' ' && !in_quotes) {
+            *p = '\0'; // Terminate the current argument
+            p++;
+            // Skip any additional spaces
+            while (*p == ' ') p++;
+            if (*p) {
+                args[count++] = p; // Start a new argument
+            }
+        } else {
+            p++;
+        }
+    }
+    
+    return count;
+}
+
+// Define unit constants (matching those in mm.c)
+#define UNIT_KB 0
+#define UNIT_MB 1
+
+// Main command handler
 void execute_command(char* cmd) {
-    // Trim leading whitespace
-    while(*cmd == ' ') cmd++;
-
-    // If empty command, just return
-    if(cmd[0] == '\0') {
-        return;
+    char* args[MAX_ARGS];
+    int arg_count = parse_args(cmd, args);
+    
+    // Skip if empty command
+    if (arg_count == 0) return;
+    
+    print_string("\n"); // Start output on a new line
+    
+    // Command dispatch
+    if (strcmp(args[0], "clear") == 0) {
+        // clear: no arguments expected
+        if (arg_count > 1) {
+            print_string("Usage: clear (no arguments expected)\n");
+        } else {
+            clear_screen();
+        }
     }
-
-    // Ensure output starts on a new line
-    print_string("\n");
-
-    if(strcmp(cmd, "clear") == 0) {
-        clear_screen();
-    }
-    else if(strncmp(cmd, "help", 4) == 0) {
+    else if (strcmp(args[0], "help") == 0) {
         int page = 1;  // Default to first page
-
-        // Check if a page number is specified
-        if(cmd[4] == ' ') {
-            page = str_to_int(cmd + 5);  // Directly use the input page number
-
-            // Validate page number
-            if(page < 1 || page > total_help_pages) {
-                page = 1;  // Falls back to first page if invalid
+        
+        if (arg_count > 2) {
+            print_string("Usage: help [page_number]\n");
+        } else if (arg_count == 2) {
+            page = str_to_int(args[1]);
+            if (page < 1 || page > total_help_pages) {
+                print_string("Invalid page number. Available pages: 1-");
+                print_char(total_help_pages + '0');
+                print_string("\n");
+                page = 1;
             }
         }
-
-        display_help_page(page);  // Passes the page number
+        
+        display_help_page(page);
     }
-    else if(strcmp(cmd, "about") == 0) {
-        print_string(OS_NAME " v" OS_VERSION "\n");
-        print_string("A simple operating system made with C and Assembly\n");
-    }
-    else if(strncmp(cmd, "echo", 4) == 0) {
-        // Check if there's text after "echo"
-        if(cmd[4] == ' ') {
-            print_string(cmd + 5);  // Print everything after "echo "
-            print_string("\n");
+    else if (strcmp(args[0], "about") == 0) {
+        // about: no arguments expected
+        if (arg_count > 1) {
+            print_string("Usage: about (no arguments expected)\n");
         } else {
-            print_string("Usage: echo <text>\n");
+            print_string(OS_NAME " v" OS_VERSION "\n");
+            print_string("A simple operating system made with C and Assembly\n");
         }
     }
-    else if(strcmp(cmd, "shutdown") == 0) {
-        print_string("Initiating system shutdown...\n");
-        shutdown_system();
+    else if (strcmp(args[0], "echo") == 0) {
+        // echo: accepts multiple arguments
+        for (int i = 1; i < arg_count; i++) {
+            print_string(args[i]);
+            if (i < arg_count - 1) {
+                print_char(' ');
+            }
+        }
+        print_string("\n");
     }
-    else if(strcmp(cmd, "reboot") == 0) {
-        print_string("Initiating system reboot...\n");
-        reboot_system();
+    else if (strcmp(args[0], "shutdown") == 0) {
+        // shutdown: no arguments expected
+        if (arg_count > 1) {
+            print_string("Usage: shutdown (no arguments expected)\n");
+        } else {
+            print_string("Initiating system shutdown...\n");
+            shutdown_system();
+        }
+    }
+    else if (strcmp(args[0], "reboot") == 0) {
+        // reboot: no arguments expected
+        if (arg_count > 1) {
+            print_string("Usage: reboot (no arguments expected)\n");
+        } else {
+            print_string("Initiating system reboot...\n");
+            reboot_system();
+        }
+    }
+    else if (strcmp(args[0], "root") == 0) {
+        // root: no arguments expected
+        if (arg_count > 1) {
+            print_string("Usage: root (no arguments expected)\n");
+        } else {
+            print_string("R00T\n");
+        }
+    }
+    else if (strcmp(args[0], "meminfo") == 0) {
+        // Check for unit arguments - only allow KB
+        int unit = UNIT_MB; // Default to MB
+        boolean valid_args = TRUE;
+        
+        if (arg_count > 2) {
+            print_string("Usage: meminfo [--kb]\n");
+            valid_args = FALSE;
+        } 
+        else if (arg_count == 2) {
+            if (strcmp(args[1], "--kb") == 0) {
+                unit = UNIT_KB;
+            } 
+            else {
+                print_string("Unknown option: ");
+                print_string(args[1]);
+                print_string("\nUsage: meminfo [--kb]\n");
+                valid_args = FALSE;
+            }
+        }
+        
+        if (valid_args) {
+            mm_dump_stats_with_unit(unit);
+        }
     }
     else {
         print_string("Unknown command: ");
-        print_string(cmd);
+        print_string(args[0]);
         print_string("\n");
     }
 }
