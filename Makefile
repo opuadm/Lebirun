@@ -19,14 +19,14 @@ LDFLAGS=-m elf_i386 \
 	-nostdlib \
 	-Tlinker.ld
 
-# Object files - removed memtest.o from here
+# Object files - added interrupt related files
 KERNEL_OBJS=build/kernel_entry.o \
 	build/kernel.o \
 	build/keyboard.o \
 	build/screen.o \
 	build/shell.o \
 	build/power.o \
-	build/mm.o
+	build/mm.o 
 
 # Default target
 all: build/lebirun.iso
@@ -36,12 +36,13 @@ build/kernel_entry.o: kernel/kernel_entry.asm
 	mkdir -p build
 	$(ASM) -f elf32 -o $@ $<
 
-build/interrupts.o: kernel/interrupts.asm
-	mkdir -p build
-	$(ASM) -f elf32 -o $@ $<
-
 # Compile C files
 build/%.o: kernel/%.c
+	mkdir -p $(@D)
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+# Compile C files in subdirectories
+build/%.o: kernel/**/%.c
 	mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
