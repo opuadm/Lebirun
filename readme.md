@@ -15,3 +15,4 @@ sudo apt-get install gcc-multilib libc6-dev-i386 nasm xorriso grub-pc-bin grub-c
 ```
 ### After that, cd to the Lebirun directory and execute "make"
 ### And then you've compiled Lebirun. If you want to recompile with your changes, execute "make clean", and afterwards execute "make".
+### If you want, you can also run ./build.sh in the same directory where you placed Lebirun in.
