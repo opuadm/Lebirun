@@ -212,6 +212,19 @@ void kmain(unsigned long mem_size, unsigned long mboot_info_addr __attribute__((
     // Main command loop
     while(1) {
         print_string(">> ");
+        
+        // Force cursor visibility before waiting for input
+        force_cursor_update();
+        
+        // Use a timer delay loop to manually force cursor blinking while waiting for input
+        while (!keyboard_data_available()) {
+            // This manually forces cursor to blink by calling the existing blinking function
+            force_cursor_update();
+            
+            // Tiny delay to prevent CPU hogging
+            for (volatile int i = 0; i < 10000; i++);
+        }
+        
         char* cmd = read_line();
 
         if(cmd[0] == '\0') {

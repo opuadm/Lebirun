@@ -257,3 +257,6 @@ global debug_break
 debug_break:
     xchg bx, bx          ; Bochs debug breakpoint
     ret
+
+; Add a .note.GNU-stack section to indicate a non-executable stack
+section .note.GNU-stack noalloc noexec nowrite progbits

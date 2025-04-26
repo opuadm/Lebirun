@@ -1,8 +1,8 @@
 #include "screen.h"
 #include "data/font_data.h"
 #include "data/types.h"
+#include "drivers/timer.h"  // Provides io_wait and other IO functions
 
-typedef enum { FALSE = 0, TRUE = 1 } boolean;
 #define NULL ((void*)0)
 
 // PIT (Programmable Interval Timer) configuration
@@ -31,6 +31,7 @@ typedef enum { FALSE = 0, TRUE = 1 } boolean;
 // Cursor configuration
 #define CURSOR_BLINK_MS 500    // Cursor blink interval in milliseconds
 #define CURSOR_THICKNESS 2
+#define CURSOR_ALWAYS_BLINK TRUE  // Force cursor to always blink
 
 // Hardware ports
 #define VGA_DAC_WRITE_INDEX  0x3C8
@@ -44,23 +45,27 @@ typedef enum { FALSE = 0, TRUE = 1 } boolean;
 #define SVGA_FB_BASE    0xE0000000
 #define HIGH_FB_BASE    0xFD000000
 
-// System timer variables
+// Update system_timer variables to include a forced blink mechanism
 static volatile u32 system_ticks = 0;
 static volatile u32 ms_counter = 0;
+static volatile boolean force_cursor_active = TRUE;
+
+// Cursor blinking variables
+static u32 last_blink_tick = 0;
+static u32 blink_count = 0;
 
 typedef struct {
-    u32*    framebuffer;    
-    u32     width;          
-    u32     height;         
-    u32     pitch;          
-    u32     bpp;            
-    u32     fg_color;       
-    u32     bg_color;       
-    u32     cursor_x;       
-    u32     cursor_y;       
+    u32*    framebuffer;
+    u32     width;
+    u32     height;
+    u32     pitch;
+    u32     bpp;
+    u32     fg_color;
+    u32     bg_color;
+    u32     cursor_x;
+    u32     cursor_y;
     boolean initialized;
     boolean cursor_visible;
-    u32     last_cursor_toggle;
 } screen_t;
 
 static screen_t screen = {
@@ -75,34 +80,24 @@ static screen_t screen = {
     .cursor_y = 0,
     .initialized = FALSE,
     .cursor_visible = TRUE,
-    .last_cursor_toggle = 0
 };
 
-static inline void outb(u16 port, u8 value) {
-    __asm__ volatile("outb %0, %1" : : "a"(value), "Nd"(port));
-}
-
-static inline u8 inb(u16 port) {
-    u8 value;
-    __asm__ volatile("inb %1, %0" : "=a"(value) : "Nd"(port));
-    return value;
-}
-
-static inline void io_wait(void) {
-    outb(0x80, 0);
-}
-
-// Initialize system timer (PIT)
 static void init_system_timer(void) {
-    u32 divisor = PIT_FREQUENCY / SYSTEM_TIMER_HZ;
-    outb(PIT_MODE, 0x36);        // Mode 3 (square wave)
-    outb(PIT_CHANNEL0, divisor & 0xFF);
-    outb(PIT_CHANNEL0, (divisor >> 8) & 0xFF);
+    timer_init();
+    // Try hardware timer first
+    timer_set_safe_mode(FALSE);
+    if (!timer_enable_hardware()) {
+        // Fall back to software timer if hardware fails
+        timer_set_safe_mode(TRUE);
+        timer_enable();
+    }
 }
 
-// Get current system time in milliseconds
+// Use this function somewhere or mark it for potential future use
+static u32 get_system_time_ms(void) __attribute__((unused));
 static u32 get_system_time_ms(void) {
-    return (system_ticks * 1000) / SYSTEM_TIMER_HZ;
+    // Each timer tick is exactly 10ms at 100Hz
+    return timer_get_ticks() * 10;
 }
 
 static void draw_pixel(u32 x, u32 y, u32 color) {
@@ -116,25 +111,24 @@ static void draw_pixel(u32 x, u32 y, u32 color) {
     }
 }
 
+// Function prototypes
+static void draw_cursor(void);
+static void draw_char_at(char c, u32 x, u32 y);
+static void scroll_screen(void);
+static boolean try_framebuffer_address(u32* addr);
+
 static void draw_cursor(void) {
+    if (!screen.initialized) return;
+
     u32 cursor_x = screen.cursor_x * (FONT_WIDTH + FONT_SPACING);
     u32 cursor_y = (screen.cursor_y * (u32)FONT_HEIGHT) + ((u32)FONT_HEIGHT - CURSOR_THICKNESS);
-    
+
     for (u32 i = 0; i < CURSOR_THICKNESS; i++) {
         for (u32 j = 0; j < FONT_WIDTH; j++) {
-            draw_pixel(cursor_x + j, cursor_y + i, 
+            // Draw cursor with current visibility state
+            draw_pixel(cursor_x + j, cursor_y + i,
                       screen.cursor_visible ? screen.fg_color : screen.bg_color);
         }
-    }
-}
-
-static void update_cursor(void) {
-    u32 current_time = get_system_time_ms();
-    
-    if (current_time - screen.last_cursor_toggle >= CURSOR_BLINK_MS) {
-        screen.cursor_visible = !screen.cursor_visible;
-        screen.last_cursor_toggle = current_time;
-        draw_cursor();
     }
 }
 
@@ -167,8 +161,11 @@ i32 init_screen(void) {
     }
     
     screen.initialized = TRUE;
-    screen.last_cursor_toggle = get_system_time_ms();
     clear_screen();
+    
+    // Initialize blinking
+    force_cursor_active = TRUE;
+    last_blink_tick = timer_get_ticks();
     
     return SCREEN_SUCCESS;
 }
@@ -205,17 +202,69 @@ static void draw_char_at(char c, u32 x, u32 y) {
     }
 }
 
+void print_char(char c) {
+    if (!screen.initialized) return;
+
+    // Store cursor visibility temporarily but don't reset blinking
+    boolean was_visible = screen.cursor_visible;
+    screen.cursor_visible = FALSE;
+    draw_cursor();
+
+    switch (c) {
+        case '\n':
+            screen.cursor_x = 0;
+            screen.cursor_y++;
+            break;
+        case '\r':
+            screen.cursor_x = 0;
+            break;
+        case '\t':
+            screen.cursor_x = (screen.cursor_x + 8) & ~7;
+            break;
+        case '\b':
+            if (screen.cursor_x > 0) {
+                screen.cursor_x--;
+                u32 base_x = screen.cursor_x * (FONT_WIDTH + FONT_SPACING);
+                u32 base_y = screen.cursor_y * (u32)FONT_HEIGHT;
+                for (u32 y = 0; y < (u32)FONT_HEIGHT; y++) {
+                    for (u32 x = 0; x < FONT_WIDTH + FONT_SPACING; x++) {
+                        draw_pixel(base_x + x, base_y + y, screen.bg_color);
+                    }
+                }
+            }
+            break;
+        default:
+            draw_char_at(c, screen.cursor_x, screen.cursor_y);
+            screen.cursor_x++;
+            break;
+    }
+
+    // Update cursor position
+    if (screen.cursor_x >= MAX_COLS) {
+        screen.cursor_x = 0;
+        screen.cursor_y++;
+    }
+    if (screen.cursor_y >= MAX_ROWS) {
+        scroll_screen();
+    }
+
+    // Restore cursor visibility without disrupting blink cycle
+    screen.cursor_visible = was_visible;
+    draw_cursor();
+}
+
 void clear_screen(void) {
     if (!screen.initialized) return;
-    
+
     u32* end = screen.framebuffer + (screen.width * screen.height);
     for (u32* ptr = screen.framebuffer; ptr < end; ptr++) {
         *ptr = screen.bg_color;
     }
-    
+
     screen.cursor_x = 0;
     screen.cursor_y = 0;
     screen.cursor_visible = TRUE;
+    last_blink_tick = timer_get_ticks();  // Start the blink timer
     draw_cursor();
 }
 
@@ -238,66 +287,11 @@ static void scroll_screen(void) {
     screen.cursor_y--;
 }
 
-void print_char(char c) {
-    if (!screen.initialized) return;
-    
-    // Clear current cursor
-    screen.cursor_visible = FALSE;
-    draw_cursor();
-    
-    switch (c) {
-        case '\n':
-            screen.cursor_x = 0;
-            screen.cursor_y++;
-            break;
-            
-        case '\r':
-            screen.cursor_x = 0;
-            break;
-            
-        case '\t':
-            screen.cursor_x = (screen.cursor_x + 8) & ~7;
-            break;
-            
-        case '\b':
-            if (screen.cursor_x > 0) {
-                screen.cursor_x--;
-                u32 base_x = screen.cursor_x * (FONT_WIDTH + FONT_SPACING);
-                u32 base_y = screen.cursor_y * (u32)FONT_HEIGHT;
-                for (u32 y = 0; y < (u32)FONT_HEIGHT; y++) {
-                    for (u32 x = 0; x < FONT_WIDTH + FONT_SPACING; x++) {
-                        draw_pixel(base_x + x, base_y + y, screen.bg_color);
-                    }
-                }
-            }
-            break;
-            
-        default:
-            draw_char_at(c, screen.cursor_x, screen.cursor_y);
-            screen.cursor_x++;
-            break;
-    }
-    
-    if (screen.cursor_x >= MAX_COLS) {
-        screen.cursor_x = 0;
-        screen.cursor_y++;
-    }
-    
-    if (screen.cursor_y >= MAX_ROWS) {
-        scroll_screen();
-    }
-    
-    // Draw cursor at new position
-    screen.cursor_visible = TRUE;
-    draw_cursor();
-}
-
 void print_string(const char* str) {
     if (!screen.initialized || !str) return;
     
     while (*str) {
         print_char(*str++);
-        update_cursor();  // Keep cursor updated while printing
     }
 }
 
@@ -308,17 +302,19 @@ void set_colors(u32 fg, u32 bg) {
 
 void set_cursor(u32 x, u32 y) {
     if (!screen.initialized) return;
-    
+
     if (x < MAX_COLS && y < MAX_ROWS) {
-        // Clear current cursor
+        // Hide cursor at old position
+        boolean was_visible = screen.cursor_visible;
         screen.cursor_visible = FALSE;
         draw_cursor();
-        
+
+        // Update position
         screen.cursor_x = x;
         screen.cursor_y = y;
-        
-        // Draw cursor at new position
-        screen.cursor_visible = TRUE;
+
+        // Restore visibility at new position without disrupting blink
+        screen.cursor_visible = was_visible;
         draw_cursor();
     }
 }
@@ -328,9 +324,135 @@ void get_screen_dimensions(u32* width, u32* height) {
     if (height) *height = screen.height;
 }
 
-// Call this from your interrupt handler
+// Force blink immediately - this is called directly by timer interrupt
 void screen_timer_tick(void) {
-    system_ticks++;
-    ms_counter += 1000 / SYSTEM_TIMER_HZ;
-    update_cursor();
+    if (!screen.initialized) return;
+    
+    // Use the known working approach from debug_cursor_blink
+    u32 current_tick = timer_get_ticks();
+    
+    // Force cursor blink every 50 ticks (500ms at 100Hz)
+    if (current_tick - last_blink_tick >= 50) {
+        // Toggle cursor visibility
+        screen.cursor_visible = !screen.cursor_visible;
+        
+        // Update counter
+        last_blink_tick = current_tick;
+        blink_count++;
+        
+        // Draw cursor with new visibility
+        draw_cursor();
+    }
+}
+
+// Alternative approach in case screen_timer_tick isn't being called properly
+void update_cursor_state(void) {
+    if (!screen.initialized || !force_cursor_active) return;
+
+    // Check if enough time has elapsed since last blink
+    u32 current_tick = timer_get_ticks();
+    
+    // We know the debug works with this approach (500ms intervals)
+    if (current_tick - last_blink_tick >= 50) {
+        // Toggle cursor visibility
+        screen.cursor_visible = !screen.cursor_visible;
+        
+        // Record time of this blink
+        last_blink_tick = current_tick;
+        blink_count++;
+        
+        // Force redraw of cursor with new visibility
+        draw_cursor();
+    }
+}
+
+// This function must be called periodically from the main code
+// Add it to kernel.c main loop if cursor still doesn't blink
+void force_cursor_update(void) {
+    update_cursor_state();
+}
+
+// Improve debug function to show more accurate timing information
+void debug_cursor_blink(void) {
+    print_string("\n=== CURSOR BLINK DEBUG INFO ===\n");
+    
+    // Show system timer configuration
+    print_string("Timer frequency: ");
+    print_int(TIMER_HZ);
+    print_string(" Hz\n");
+    
+    print_string("MS per tick: ");
+    print_int(1000 / TIMER_HZ);
+    print_string(" ms\n");
+    
+    print_string("Current timer ticks: ");
+    print_int(timer_get_ticks());
+    print_string("\n");
+    
+    print_string("Cursor visible: ");
+    print_char(screen.cursor_visible ? '1' : '0');
+    print_string("\n");
+    
+    print_string("Blink interval: ");
+    print_int(CURSOR_BLINK_MS);
+    print_string(" ms (");
+    print_int(CURSOR_BLINK_MS / (1000 / TIMER_HZ));
+    print_string(" ticks)\n");
+    
+    // Timer status check
+    print_string("Timer status: ");
+    print_string(timer_get_status());
+    print_string("\n\n");
+    
+    print_string("Testing cursor blink timing...\n");
+    
+    // Display start time
+    u32 start_tick = timer_get_ticks();
+    print_string("Start tick: ");
+    print_int(start_tick);
+    print_string("\n");
+    
+    // Force exactly 3 complete blink cycles (6 toggles)
+    u32 expected_duration_ms = CURSOR_BLINK_MS * 6;
+    print_string("Expected test duration: ");
+    print_int(expected_duration_ms);
+    print_string(" ms\n");
+    
+    // Do 6 toggling (3 complete blink cycles)
+    for (int blink = 0; blink < 6; blink++) {
+        // Toggle cursor visibility
+        screen.cursor_visible = !screen.cursor_visible;
+        draw_cursor();
+        
+        // Sleep for exactly one blink interval
+        timer_sleep(CURSOR_BLINK_MS / (1000 / TIMER_HZ));
+    }
+    
+    // Record end time
+    u32 end_tick = timer_get_ticks();
+    u32 elapsed_ticks = end_tick - start_tick;
+    u32 elapsed_ms = elapsed_ticks * (1000 / TIMER_HZ);
+    
+    print_string("End tick: ");
+    print_int(end_tick);
+    print_string("\n");
+    
+    print_string("Elapsed: ");
+    print_int(elapsed_ms);
+    print_string(" ms (");
+    print_int(elapsed_ticks);
+    print_string(" ticks)\n");
+    
+    print_string("Blink test complete.\n");
+}
+
+// Add this new function to directly control cursor visibility
+void set_cursor_visibility(boolean visible) {
+    if (!screen.initialized) return;
+    
+    // Only redraw if visibility is changing
+    if (visible != screen.cursor_visible) {
+        screen.cursor_visible = visible;
+        draw_cursor();
+    }
 }

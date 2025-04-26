@@ -52,6 +52,11 @@ void get_memory_info(mem_info_t* info);
 void mm_dump_stats();
 void mm_dump_stats_with_unit(int unit);
 
+// Assembly-implemented functions for hardware-specific memory operations
+uint32_t asm_verify_memory_size(uint32_t suggested_size);
+void asm_invalidate_page(uint32_t addr);
+void asm_flush_tlb(void);
+
 // Helper functions
 void int_to_str(uint32_t num, char* str);
 

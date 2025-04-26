@@ -40,6 +40,11 @@ void init_keyboard(void) {
     outb(KEYBOARD_COMMAND_PORT, 0xAE);
 }
 
+// Check if keyboard data is available without blocking
+boolean keyboard_data_available(void) {
+    return (inb(KEYBOARD_STATUS_PORT) & 1);
+}
+
 char read_char(void) {
     while(1) {
         if(inb(KEYBOARD_STATUS_PORT) & 1) {

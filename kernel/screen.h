@@ -13,6 +13,9 @@ typedef unsigned short u16;
 typedef unsigned int   u32;
 typedef signed int     i32;
 
+// Use this boolean definition across all files
+typedef enum { FALSE = 0, TRUE = 1 } boolean;
+
 // Screen dimensions
 #define VBE_WIDTH  1024
 #define VBE_HEIGHT 768
@@ -47,5 +50,20 @@ void print_char(char c);          // Print a single character
 void print_string(const char* s); // Print a null-terminated string
 void set_colors(u32 fg, u32 bg);  // Set foreground and background colors
 void set_cursor(u32 x, u32 y);    // Set cursor position
+
+// Add these function declarations with the correct boolean type
+void set_cursor_visibility(boolean visible);
+boolean keyboard_data_available(void);
+
+// Timer integration
+void screen_timer_tick(void);
+void update_cursor_state(void);
+void force_cursor_update(void);
+
+// Debug function
+void debug_cursor_blink(void);
+
+// Shell function (to fix the error)
+void shell_main(void);
 
 #endif // SCREEN_H

@@ -7,5 +7,7 @@
     "files.associations": {
         "Makefile*": "makefile"
     },
-    "makefile.configureOnOpen": false
+    "makefile.configureOnOpen": false,
+    "git.autoRepositoryDetection": false,
+    "git.enabled": true
 }
