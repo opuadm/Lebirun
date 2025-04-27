@@ -1,6 +1,6 @@
 #include "interrupt.h"
 #include "idt.h"       // Added for idt_init()
-#include "../screen.h"
+#include "../drivers/screen.h"
 #include "exceptions.h"
 
 // Configure system to be compatible with virtualized environments

@@ -1,7 +1,7 @@
 #include "timer.h"
 #include "../interrupts/isr.h"
-#include "../screen.h"
-#include "../shell.h"  // For print_int
+#include "../drivers/screen.h"
+#include "../shell/shell.h"  // For print_int
 
 // Make timer_ticks globally visible
 volatile uint32_t timer_ticks = 0;

@@ -1,6 +1,6 @@
 #include "idt.h"
 #include "isr.h"
-#include "../screen.h"
+#include "../drivers/screen.h"
 
 // IDT entries array and priority table
 static idt_entry_t idt_entries[256];

@@ -1,6 +1,6 @@
 #include "exceptions.h"
 #include "isr.h"
-#include "../screen.h"
+#include "../drivers/screen.h"
 
 // Exception state tracking variables
 static int in_exception_handler = 0;

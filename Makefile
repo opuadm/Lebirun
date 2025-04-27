@@ -22,12 +22,12 @@ LDFLAGS=-m elf_i386 \
 # Object files - added new assembly files for memory and timer
 KERNEL_OBJS=build/kernel_entry.o \
 	build/kernel.o \
-	build/keyboard.o \
-	build/screen.o \
-	build/shell.o \
-	build/power.o \
-	build/mm.o \
-	build/mm_asm.o \
+	build/drivers/keyboard.o \
+	build/drivers/screen.o \
+	build/shell/shell.o \
+	build/drivers/power.o \
+	build/drivers/mm.o \
+	build/drivers/mm_asm.o \
 	build/interrupts/idt.o \
 	build/interrupts/isr.o \
 	build/interrupts/interrupt.o \
@@ -37,19 +37,19 @@ KERNEL_OBJS=build/kernel_entry.o \
 	build/drivers/timer.o \
 	build/drivers/timer_asm.o
 
-# Store the build start time (in milliseconds)
+# Store the build start time (in milliseconds) - using a more robust approach
 START_TIME_SEC := $(shell date +%s)
-START_TIME_NSEC := $(shell date +%N)
-START_TIME_MS := $(shell echo $$(( $(START_TIME_SEC) * 1000 + $(START_TIME_NSEC) / 1000000 )))
+START_TIME_NSEC := $(shell date +%N | sed 's/^0*//')
+START_TIME_MS := $(shell expr $(START_TIME_SEC) \* 1000 + $(START_TIME_NSEC) / 1000000)
 
 # Default target
 all: build/lebirun.iso
 	$(eval END_TIME_SEC := $(shell date +%s))
-	$(eval END_TIME_NSEC := $(shell date +%N))
-	$(eval END_TIME_MS := $(shell echo $$(( $(END_TIME_SEC) * 1000 + $(END_TIME_NSEC) / 1000000 ))))
-	$(eval DIFF_MS := $(shell echo $$(( $(END_TIME_MS) - $(START_TIME_MS) ))))
-	$(eval DIFF_SEC := $(shell echo $$(( $(DIFF_MS) / 1000 ))))
-	$(eval DIFF_REMAINDER_MS := $(shell echo $$(( $(DIFF_MS) % 1000 ))))
+	$(eval END_TIME_NSEC := $(shell date +%N | sed 's/^0*//'))
+	$(eval END_TIME_MS := $(shell expr $(END_TIME_SEC) \* 1000 + $(END_TIME_NSEC) / 1000000))
+	$(eval DIFF_MS := $(shell expr $(END_TIME_MS) - $(START_TIME_MS)))
+	$(eval DIFF_SEC := $(shell expr $(DIFF_MS) / 1000))
+	$(eval DIFF_REMAINDER_MS := $(shell expr $(DIFF_MS) % 1000))
 	@if [ $(DIFF_MS) -ge 1000 ]; then \
 		echo "Build completed in $(DIFF_SEC).$(shell printf "%03d" $(DIFF_REMAINDER_MS)) seconds"; \
 	else \
@@ -67,7 +67,7 @@ build/interrupts/isr_asm.o: kernel/interrupts/isr.asm
 	$(ASM) -f elf32 -o $@ $<
 
 # Compile mm.asm
-build/mm_asm.o: kernel/mm.asm
+build/drivers/mm_asm.o: kernel/drivers/mm.asm
 	mkdir -p build
 	$(ASM) -f elf32 -o $@ $<
 

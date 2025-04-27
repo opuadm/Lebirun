@@ -1,6 +1,6 @@
 #include "idt.h"
 #include "isr.h"
-#include "../screen.h"
+#include "../drivers/screen.h"
 #include "exceptions.h"
 
 // These structs should be in idt.c, we need to access them differently

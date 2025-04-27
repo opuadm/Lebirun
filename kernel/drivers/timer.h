@@ -2,7 +2,7 @@
 #define TIMER_H
 
 #include "../data/types.h"
-#include "../screen.h" // Include for the boolean type
+#include "../drivers/screen.h" // Include for the boolean type
 
 // Remove boolean definition - use the one from screen.h
 // typedef enum { FALSE = 0, TRUE = 1 } boolean;

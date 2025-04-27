@@ -1,5 +1,5 @@
 #include "isr.h"
-#include "../screen.h"
+#include "../drivers/screen.h"
 
 // External declarations for IDT functions to avoid circular includes
 extern int get_idt_entry_present(uint8_t index);

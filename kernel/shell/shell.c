@@ -1,11 +1,11 @@
-#include "screen.h"
-#include "keyboard.h"
-#include "data/about.h"
-#include "power.h"
-#include "mm.h"
-#include "interrupts/exceptions.h" 
-#include "interrupts/idt_checker.h"
-#include "drivers/timer.h"
+#include "../drivers/screen.h"
+#include "../drivers/keyboard.h"
+#include "../data/about.h"
+#include "../drivers/power.h"
+#include "../drivers/mm.h"
+#include "../interrupts/exceptions.h" 
+#include "../interrupts/idt_checker.h"
+#include "../drivers/timer.h"
 
 // Remove the conflicting boolean definition - use the one from timer.h
 // typedef enum { FALSE = 0, TRUE = 1 } boolean;

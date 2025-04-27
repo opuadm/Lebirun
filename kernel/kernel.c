@@ -1,7 +1,7 @@
-#include "keyboard.h"
-#include "screen.h"
-#include "shell.h"
-#include "mm.h"
+#include "drivers/keyboard.h"
+#include "drivers/screen.h"
+#include "shell/shell.h"
+#include "drivers/mm.h"
 
 // Define memory size constants (matching definitions in mm.c)
 #define KB(x) ((x) * 1024UL)
