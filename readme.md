@@ -1,6 +1,6 @@
 # Lebirun (C Version)
 ### Lebirun is a fun project i wanted to do to make a OS (that shouldn't be used in productions). This OS was formerly made with Cosmos in C#, now it's made in C and Assembly.
-### I recommend running this OS in a hypervisor instead of your main machine, who knows what would happen
+### I recommend running this OS in a hypervisor instead of your main machine, because who knows what would happen with by example your files. Testing Lebirun on bare metal and other hypervisors are welcome!
 
 # How to compile (Tested with Debian 12.10 amd64 WSL)
 ### You have to first execute these commands:
@@ -13,6 +13,7 @@ sudo apt update
 ```bash
 sudo apt-get install gcc-multilib libc6-dev-i386 nasm xorriso grub-pc-bin grub-common
 ```
+(This installs gcc-multilib, libc6-dev for i386, nasm, xorriso, grub-pc-bin and grub-common)
 ### After that, cd to the Lebirun directory and execute "make"
 ### And then you've compiled Lebirun. If you want to recompile with your changes, execute "make clean", and afterwards execute "make".
 ### If you want, you can also run ./build.sh in the same directory where you placed Lebirun in.
